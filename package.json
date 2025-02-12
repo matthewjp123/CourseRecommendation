@@ -1,0 +1,17 @@
+{
+  "name": "ece496-2023810",
+  "version": "1.0.0",
+  "description": "Repo for ECE496 Team 2023810 from University of Toronto.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "esm": "^3.2.25",
+    "express": "^4.18.2",
+    "node-fetch": "^3.3.2"
+  }
+}

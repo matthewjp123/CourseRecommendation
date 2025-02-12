@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <!-- Refactored into styles.css -->
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+
+<body>
+    <div class="tab">
+        <button class="tablinks" onclick="openMainTab(event, 'Profile')" id="ProfileTab">Profile</button>
+        <button class="tablinks" onclick="openMainTab(event, 'Chat')" id="ChatTab">Chat</button>
+        <button class="tablinks" onclick="openMainTab(event, 'CourseRec')" id="CourseRecTab">Course Recommendation</button>
+        <button class="tablinks" onclick="openMainTab(event, 'MinorCert')" id="MinorCertTab">Minor/Certificate</button>
+    </div>
+
+    <!--Profile-->
+    <div id="Profile" class="tabcontent">
+        <header>
+            <h1>User Profile</h1>
+        </header>
+        <section>
+            <h2>Basic Information</h2>
+        
+            <div>
+                <p><span class="input-label">Enter name and course code: </span><input id="userInfo" type="text" placeholder="e.g. 'William Maida | ECE345'"></p>
+                <p><span class="input-label">Enter a short message to introduce yourself: </span></p>
+                <p><textarea id="userMessage" maxlength="300" placeholder="Enter your message (no more than 300 characters)"></textarea></p>
+                <button onclick="saveProfile()">Save Profile</button>
+            </div>
+
+        </section>
+    </div>
+
+    <div id="Chat" class="tabcontent">
+        <header>
+            <h1>Chat</h1>
+        </header>
+        <section id="iframeContainer">
+             <iframe src="chat_page.html" width="100%" style="border:none;"></iframe>
+        </section>
+    </div>
+
+    <!--Course Recommendation-->
+    <div id="CourseRec" class="tabcontent">
+        <header>
+            <h1>Course Recommendation</h1>
+        </header>
+
+        <div id="firstQuestion">
+            <label for="firstQuestionSelect">Which Statement Best Describes How You Want to Pick Your Courses?</label>
+            <p></p>
+            <select id="firstQuestionSelect">
+                <optgroup>
+                    <option value="set1">I would prefer to take courses where I have a good chance of a high mark</option>
+                    <option value="set2">I care more about how courses will affect my future career prospects</option>
+                    <option value="set3">I want to take courses that I find interesting, I do not care how difficult they will be</option>
+                    <option value="set4">Breakdown of courses; i.e Tutorials, Lectures, and Labs is important to me when selecting course</option>
+                </optgroup>
+            </select>
+            <button id="firstQuestionSubmit">Submit</button>
+        </div>
+
+        <form id="quizform"></form>
+
+        <script type="module" src="./quizform.js"></script> <!--Important script!-->
+    </div>
+
+    <div id="MinorCert" class="tabcontent">
+
+        <header>
+            <h1>Minors and Certificates Tracker</h1>
+        </header>
+        <body>
+        <section>
+            <h2>1. Input Year 1 to Year 4 Courses</h2>
+            <p> Make sure to press "Save Year 1/2/3/4 Courses" every time you make changes to each Year's course</p>
+            <p> Make sure to press "Save All Year 1 - 4 courses" after individual Year courses are saved </p>
+            <div id="academicHistory">
+                <input type="text" id="textInput1" placeholder="Enter text for input 1...">
+                <button onclick="saveToLocalStorage(1)">Save Year 1 Courses</button>
+                <button onclick="clearLocalStorage(1)">Clear Year 1 Courses</button><br>
+
+                <input type="text" id="textInput2" placeholder="Enter text for input 2...">
+                <button onclick="saveToLocalStorage(2)">Save Year 2 Courses</button>
+                <button onclick="clearLocalStorage(2)">Clear Year 2 Courses</button><br>
+
+                <input type="text" id="textInput3" placeholder="Enter text for input 3...">
+                <button onclick="saveToLocalStorage(3)">Save Year 3 Courses</button>
+                <button onclick="clearLocalStorage(3)">Clear Year 3 Courses</button><br>
+
+                <input type="text" id="textInput4" placeholder="Enter text for input 4...">
+                <button onclick="saveToLocalStorage(4)">Save Year 4 Courses</button>
+                <button onclick="clearLocalStorage(4)">Clear Year 4 Courses</button><br>
+            </div>
+
+            <button onclick="combineStoredData()">Save All Year 1 - 4 courses</button><br>
+
+            <!-- <button onclick="displayClosestMinor()">Display Closest Minor </button><br> New button for displaying matching courses -->
+            <!-- <button onclick="retrieveDropdownSelectedMinor()">Display User Selected Minor </button><br> New button for displaying matching courses -->
+
+
+            <h3>Your Inputted Courses for Year 1 - 4</h3>
+            <ul id="storedValues"></ul>
+
+            <br>
+            <br>
+            <h2>2. Recommended Minor</h2>
+            <button onclick="displayClosestMinor()">Display Closest Minor </button><br> <!-- New button for displaying matching courses -->
+            <ul id="recommendedMinor"></ul>
+            <!-- <ul id="recommendedMinor2"></ul> -->
+
+            <br>
+            <br>
+            <h2>3. Check Required Courses for a Minor</h2>
+            <p>3.1 Choose one Minor from the Drop-down list and press the "Save Selected Minor" button"</p>
+            <p>3.2 Press "Check Remaining Courses Detail" to check the remaining courses required to obtain the selected Minor</p>
+            <select id="minorDropdown">
+            </select>
+            <!-- <button id="selectButton">Select this Minor</button> -->
+            <button id="saveMinor" onclick="saveToLocalStorage2()">Save Selected Minor</button>
+            <h2></h2>
+            <button onclick="displayUserRequiredRemainingCourses()">Check Remaining Courses Detail</button>
+            <ul id="requiredMinorCourses"></ul>
+
+
+            <script>
+                var combinedData = {};
+                var combinedDataString = '';
+                var modifiedCombinedDataString = '';
+                var matchingCounts = []; // Moved this variable declaration to the global scope
+                var dropdown_selected_minor = '';
+                // // List of User Inputted Courses
+                // const userCourses = ["ECE472H1", "ECE421H1", "ECE431H1"];
+                
+                // List of Courses in each Field/Discipline
+                const courses = {
+                    engBusinessMinor1To4Courses: ["ECE472H1","JRE300H1","JRE410H1","JRE420H1"],
+                    engBusinessMinor5To6Courses: ["APS420H1","APS500H1","APS502H1","APS510H1","APS511H1", "APS521H1","CHE488H1","ECO101H1","ECO102H1","FOR308H1","GGR251H1","GGR252H1","HPS283H1","MIE354H1","MIE540H1","PHL295H1","TEP234H1","TEP343H1","TEP432H1", "TEP442H1","TEP444H1", "TEP445H1","TEP448H1"],
+                    bioMinor1to4Courses: ["CHE353H1","BME331H1","BME455H1","CHE354H1","BME440H1"],
+                    bioMinor5to6Courses: ["ECE335H1","BME595H1","ECE331H1","ECE446H1","BME445H1","BME331H1","ECE431H1","ECE441H1","ECE516H1","ECE448H1","BME440H1","CHE354H1","FOR308H1","BME412H1","CHE450H1","CHE475H1","MSE343H1","MSE440H1","BME350H1","BME395H1","MIE439H1","MIE458H1","MIE520H1","BME330H1","BME530H1","MIE437H1","CHE471H1","MGY441H1","BCB420H1","CHE462H1","CHE564H1","CIV342H1","CIV541H1","MGY377H1","CHE416H1","CHM456H1","FOR421H1","FOR424H1","FOR425H1","HMB201H1","HMB265H1","HPS318H1","HPS319H1","IMM250H1","MIE242H1","MIE343H1","MIE523H1","MIE561H1","PCL201H1","PCL302H1","PHL281H1","PSL300H1"],
+                    musicMinor1to3Courses: ["PMU299Y","TMU130H1","ECE446H1"],
+                    musicMinor4to5Courses: ["TMU111H1","TMU319H1","TMU320H1","TMU313H1","TMU330H1","HMU111H1","TMU131H1","MusicRelatedThesisOrCapstone"],
+                    aiMinor1to1Courses: ["APS360H1"],
+                    aiMinor2to2Courses: ["CSC263H1","ECE345H1","MIE245H1","MIE335H1"],
+                    aiMinor3to3Courses: ["CSC384H1","MIE369H1","ROB311H1"],
+                    aiMinor4to4Courses: ["CSC311H1","ECE421H1","MIE424H1","ROB313H1"],
+                    aiMinor5to55ourses: ["CHE408H1", "CHE507H1","CME538H1","CSC401H1","CSC412H1","CSC413H1","CSC420H1","CSC485H1","CSC486H1","ECE368H1", "HPS340H1","HPS345H1","HPS346H1","MIE368H1","MIE451H1","MIE457H1","MIE509H1","MIE524H1","MIE562H1","MIE566H1","MIE567H1","MSE403H1","MSE465H1","ROB501H1"]
+                };
+                
+                const minor_courses = ["Engineering Business Minor", "Bioengineering Minor", "Music Minor", "AI Minor"]
+                
+                // List of "Required" Courses in each Minor subfield that mustbe fulfilled to receive the minor.
+                const fulfill_courses = {
+                    engBusinessMinor1To4Courses_fullfilled: 4,
+                    engBusinessMinor5To6Courses_fullfilled: 2,
+                    bioMinor1to4Courses_fullfilled: 4,
+                    bioMinor5to6Courses_fullfilled: 2,
+                    musicMinor1to3Courses_fullfilled: 3,
+                    musicMinor4to5Courses_fullfilled: 2,
+                    aiMinor1to1Courses_fullfilled: 1,
+                    aiMinor2to2Courses_fullfilled: 1,
+                    aiMinor3to3Courses_fullfilled: 1,
+                    aiMinor4to4Courses_fullfilled: 1,
+                    aiMinor5to55ourses_fullfilled: 1
+                };
+                
+                
+                
+                function saveToLocalStorage(inputNumber) {
+                    var inputText = document.getElementById("textInput" + inputNumber).value;
+                    localStorage.setItem("userInput" + inputNumber, inputText);
+                    alert("Text for Input " + inputNumber + " saved to Local Storage!");
+                    displayStoredValues();
+                }
+                
+                function clearLocalStorage(inputNumber) {
+                    localStorage.removeItem("userInput" + inputNumber);
+                    alert("Text for Input " + inputNumber + " cleared from Local Storage!");
+                    displayStoredValues();
+                }
+                
+                // Save User Selected Minor that they want to check from the DropDown List to Local Storage
+                function saveToLocalStorage2() {
+                    var dropdown_selected_minor = document.getElementById("minorDropdown").value;
+                    localStorage.removeItem("minor_name");
+                    localStorage.setItem("minor_name", dropdown_selected_minor);
+                    alert(dropdown_selected_minor + " saved to Local Storage!");
+                    // displayStoredValues();
+                }
+                
+                // function clearLocalStorage2(inputString) {
+                //     localStorage.removeItem("minor_name");
+                //     alert(inputString + " cleared from Local Storage!");
+                //     displayStoredValues();
+                // }
+                
+                // Display each stored Input 1,2,3,4 values onto the webpage screen,
+                function displayStoredValues() {
+                    var storedValuesContainer = document.getElementById("storedValues");
+                    storedValuesContainer.innerHTML = ""; // Clear previous values
+                
+                    for (var i = 1; i <= 4; i++) {
+                        var key = "userInput" + i;
+                        var value = localStorage.getItem(key);
+                        if (value) {
+                            var listItem = document.createElement("li");
+                            listItem.textContent = key + ": " + value;
+                            storedValuesContainer.appendChild(listItem);
+                        }
+                    }
+                }
+                
+                // Get an Array of combined courses in each year of the user from each Input Text Box 1,2,3,4. Retrieve data from Local Storage.
+                function combineStoredData() {
+                    combinedData = {};
+                    for (var i = 1; i <= 4; i++) {
+                        var key = "userInput" + i;
+                        var value = localStorage.getItem(key);
+                        if (value) {
+                            combinedData[key] = value;
+                        }
+                    }
+                    combinedDataString = JSON.stringify(combinedData);
+                    alert("Combined Data: " + combinedDataString);
+                    console.log(combinedDataString); // Print combinedDataString to console
+                
+                    // Modify combinedDataString
+                    modifyCombinedDataString();
+                }
+                
+                // Get an "Reformated" Array of combined courses in each year of the user from each Input Text Box 1,2,3,4. Retrieve data from Local Storage.
+                // This reformated array is stored in the variable "modifiedCombinedDataString" and represents all the courses that has been taken from year 1 - 4 of the user.
+                function modifyCombinedDataString() {
+                    var parsedValues = [];
+                    for (var i = 1; i <= 4; i++) {
+                        var key = "userInput" + i;
+                        var value = localStorage.getItem(key);
+                        if (value) {
+                            // Split the value by comma and remove whitespace
+                            var courses = value.split(',').map(course => course.trim());
+                            parsedValues = parsedValues.concat(courses);
+                        }
+                    }
+                    // modifiedCombinedDataString = JSON.stringify({ "courses": parsedValues });
+                    modifiedCombinedDataString = JSON.stringify(parsedValues);
+                    alert("Modified Combined Data: " + modifiedCombinedDataString);
+                    console.log(modifiedCombinedDataString); // Print modifiedCombinedDataString to console
+                }
+                
+                
+                // // Retrieve the User selected minor from the DropDown List. Retrieve data from Local Storage.
+                // function retrieveDropdownSelectedMinor() {
+                //     dropdown_selected_minor = localStorage.getItem("minor_name");
+                //     console.log(dropdown_selected_minor)
+                // }
+                
+                
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                // MAIN Function: Get the count of matching courses in EACH Area/Discipline
+                // MAIN Function:
+                // Get the drop-down element
+                const minorDropdownList = document.getElementById("minorDropdown");
+                var minorGroup = document.createElement("optgroup");
+                minorDropdownList.append(minorGroup);
+                
+                // Populate the drop-down list with options
+                minor_courses.forEach(minor => {
+                    const option = document.createElement("option");
+                    option.value = minor; // Assign value to the option (optional)
+                    option.textContent = minor; // Display text for the option
+                    minorGroup.appendChild(option); // Add the option to the drop-down list
+                });
+                
+                ////////////////////////////////////////////////////
+                // MAIN
+                function filteredCourses(userCourses, courses) {
+                    const filtered = {};
+                
+                    // Iterate over each key in the 'courses' object
+                    for (const key in courses) {
+                        if (courses.hasOwnProperty(key)) {
+                            filtered[key] = courses[key].filter(course => !userCourses.includes(course));
+                        }
+                    }
+                
+                    return filtered;
+                }
+                
+                
+                // Function to count the number of subminors in each minor. Example, 5 for ai since aiMinor has aiMinor1to1Courses, aiMinor2to2Courses, aiMinor3o3Courses, aiMinor4to4Courses, aiMinor5to5Courses
+                function countKeysUntilMinor(courses) {
+                    // Initialize an object to store the counts of keys until "Minor"
+                    const counts = {};
+                
+                    // Iterate over each key in the courses object
+                    for (const key of Object.keys(courses)) {
+                        // Extract the substring until "Minor"
+                        const substring = key.split("Minor")[0];
+                        
+                        // If the substring is already in counts, increment its count, otherwise set it to 1
+                        counts[substring] = (counts[substring] || 0) + 1;
+                    }
+                
+                    // Extract the counts and return as an array
+                    const countsArray = Object.values(counts);
+                    return countsArray;
+                }
+                
+                
+                // Function to get the count of matching courses in EACH Area/Discipline
+                // KEY: VERY IMPORTANT: Courses will be capped/ limited by the required number of courses in each minor subfields as indicated in fulfill_courses
+                // Ex: If a student has completed the following number of courses in each minor sub fields [1, 0, 0, 1, 0, 0, 0, 0, 1, 2, 0], then this function will INSTEAD return ONLY [1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0], because the MINIMUM requirement of aiMinor4to4Courses_fullfilled is just 1 courses. The student have taken 2 (more than enough/ more than is required too, so we ignore the additional courses taken and capped it to the min. requirement as indicated in "fulfill_courses" ABOVE)
+                function countMatchingCourses(courses, userCourses, fulfill_courses) {
+                    // Convert the courses object into an array of its values
+                    const coursesArray = Object.values(courses);
+                    
+                    const fulfill_coursesArray = Object.values(fulfill_courses);
+                
+                    // Initialize counts array with length equal to the number of keys in the courses object
+                    const counts = new Array(Object.keys(courses).length).fill(0);
+                
+                    // Helper function to count matching courses
+                    function countMatching(coursesArray) {
+                        return coursesArray.filter(course => userCourses.includes(course)).length;
+                    }
+                
+                    // Count matching courses in each category
+                    for (let i = 0; i < coursesArray.length; i++) {
+                        counts[i] = countMatching(coursesArray[i]);
+                    }
+                
+                    for (let j = 0; j < coursesArray.length; j++) {
+                        if (counts[j] > fulfill_coursesArray[j]) {
+                            counts[j] = fulfill_coursesArray[j];
+                        }
+                    }
+                    return counts;
+                }
+                
+                
+                // Function to subtract matching counts from fulfilled courses
+                function subtractMatchingCounts(fulfill_courses, matchingCounts) {
+                    const result = [];
+                    const fulfilledValues = Object.values(fulfill_courses);
+                    for (let i = 0; i < fulfilledValues.length; i++) {
+                        if (fulfilledValues[i] - matchingCounts[i] >= 0) {
+                            result.push(fulfilledValues[i] - matchingCounts[i]);
+                        }
+                        else {
+                            result.push(0);
+                        }
+                        
+                    }
+                    return result;
+                }
+                
+                // Function to get the total Number of Courses in each Minor
+                function sumMatchingCounts(countsUntilMinor, matchingCounts) {
+                    const result = [];
+                    let index = 0;
+                
+                    // Iterate through countsUntilMinor to determine the ranges
+                    for (const count of countsUntilMinor) {
+                        // Sum matchingCounts for the current range
+                        let sum = 0;
+                        for (let i = 0; i < count; i++) {
+                            sum += matchingCounts[index];
+                            index++;
+                        }
+                        result.push(sum);
+                    }
+                
+                    return result;
+                }
+                
+                function calculateCompletionRatio(summed_studentsCourses, summed_requiredCourses) {
+                    const completionRatio = [];
+                    
+                    for (let i = 0; i < summed_studentsCourses.length; i++) {
+                        if (summed_requiredCourses[i] === 0) {
+                            // Avoid division by zero
+                            completionRatio.push(0);
+                        } else {
+                            completionRatio.push(summed_studentsCourses[i] / summed_requiredCourses[i]);
+                        }
+                    }
+                    
+                    return completionRatio;
+                }
+                
+                function closestMinor(completionRatio) {
+                    const maxRatio = Math.max(...completionRatio);
+                    const closestMinors = [];
+                    
+                    for (let i = 0; i < completionRatio.length; i++) {
+                        if (completionRatio[i] === maxRatio) {
+                            closestMinors.push(i);
+                        }
+                    }
+                    
+                    return closestMinors;
+                }
+                
+                function getClosestMinorName(closestMinors, minorCourses) {
+                    const closestMinorNames = closestMinors.map(index => minorCourses[index]);
+                    return closestMinorNames;
+                }
+                
+                
+                function remainingCoursesToTake(dropdown_selected_minor, minor_courses, filteredCourses, countsUntilMinor) {
+                    var minor_index1 = 0;
+                    var start_index1 = 0;
+                    var last_index1 = 0;
+                    var keys1 = Object.keys(filteredCourses);
+                    var result1 = [];
+                
+                    // Get the index of the minor selected by user
+                    for (let i = 0; i < minor_courses.length; i++) {
+                        if (dropdown_selected_minor === minor_courses[i]) {
+                            minor_index1 = i;
+                        }
+                    }
+                
+                    // 
+                    // Get the start_index and last_index to iterate through the key's postion in filteredCourses
+                    for (let j = 0; j < countsUntilMinor.length; j++) {
+                        if (j < minor_index1) {
+                            start_index1 = start_index1 + countsUntilMinor[j];
+                        }
+                
+                        if (j === minor_index1) {
+                            last_index1 = start_index1 + countsUntilMinor[j];
+                        }
+                    }
+                
+                    // Get the courses subfields of the selected minor
+                    // Get the array (i.e. value) of the key at position start_index to position last_index of the "filteredCourses"
+                    for (let i = start_index1; i < last_index1; i++) {
+                        const key1 = keys1[i];
+                        if (key1) {
+                            result1.push(filteredCourses[key1]);
+                        } else {
+                            console.error(`Invalid index ${i}`);
+                        }
+                    }
+                
+                    return result1;
+                
+                }
+                
+                
+                function selectedCourseIndex(dropdown_selected_minor, minor_courses, remainingCounts, countsUntilMinor) {
+                    var minor_index2 = 0;
+                    var start_index2 = 0;
+                    var last_index2 = 0;
+                    var result2 = [];
+                
+                    // Get the index of the minor selected by user
+                    for (let i = 0; i < minor_courses.length; i++) {
+                        if (dropdown_selected_minor === minor_courses[i]) {
+                            minor_index2 = i;
+                        }
+                    }
+                
+                    // 
+                    // Get the start_index and last_index to iterate through the key's postion in filteredCourses
+                    for (let j = 0; j < countsUntilMinor.length; j++) {
+                        if (j < minor_index2) {
+                            start_index2 = start_index2 + countsUntilMinor[j];
+                        }
+                
+                        if (j === minor_index2) {
+                            last_index2 = start_index2 + countsUntilMinor[j];
+                        }
+                    }
+                
+                    for (let i = start_index2; i < last_index2; i++) {
+                        result2.push(remainingCounts[i]);
+                    }
+                
+                    return result2;
+                }
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
+                
+                
+                // Function to display matching courses when button is clicked
+                // function displayMatchingCourses() {
+                //     const matchingCounts = countMatchingCourses(courses, modifiedCombinedDataString);
+                //     alert("Matching Courses: " + matchingCounts.join(', '));
+                // }
+                
+                // function displayClosestMinor() {
+                //     const closestMinorNames = getClosestMinorName(closestMinor(calculateCompletionRatio(sumMatchingCounts(countKeysUntilMinor(courses), countMatchingCourses(courses, modifiedCombinedDataString, fulfill_courses)), sumMatchingCounts(countKeysUntilMinor(courses), Object.values(fulfill_courses)))), minor_courses);
+                
+                //     // Select the recommended minor container
+                //     var recommendedMinorContainer1 = document.getElementById("recommendedMinor1");
+                
+                //     // Clear previous recommendations
+                //     recommendedMinorContainer1.innerHTML = "";
+                
+                //     // Create a new list item to display the closest minor names
+                //     var closestMinorItem1 = document.createElement("li");
+                //     closestMinorItem1.textContent = "Recommended Minor: " + closestMinorNames.join(', ');
+                
+                //     // Append the new list item to the recommended minor container
+                //     recommendedMinorContainer1.appendChild(closestMinorItem1);
+                // }
+                
+                
+                // Global variables to store closestMinorNames and closestMinorNumRemainingCourses
+                // var closestMinorNames;
+                // var closestMinorNames = getClosestMinorName(closestMinor(calculateCompletionRatio(sumMatchingCounts(countKeysUntilMinor(courses), countMatchingCourses(courses, modifiedCombinedDataString, fulfill_courses)), sumMatchingCounts(countKeysUntilMinor(courses), Object.values(fulfill_courses)))), minor_courses);
+                // // var closestMinorNumRemainingCourses;
+                // var closestMinorNumRemainingCourses = sumMatchingCounts(countKeysUntilMinor(courses), subtractMatchingCounts(fulfill_courses, countMatchingCourses(courses, modifiedCombinedDataString, fulfill_courses)))[closestMinor(calculateCompletionRatio(sumMatchingCounts(countKeysUntilMinor(courses), countMatchingCourses(courses, modifiedCombinedDataString, fulfill_courses)), sumMatchingCounts(countKeysUntilMinor(courses), Object.values(fulfill_courses))))[0]]; // Output: [6, 6, 5, 5]
+                
+                function displayClosestMinor() {
+                    const closestMinorNames = getClosestMinorName(closestMinor(calculateCompletionRatio(sumMatchingCounts(countKeysUntilMinor(courses), countMatchingCourses(courses, modifiedCombinedDataString, fulfill_courses)), sumMatchingCounts(countKeysUntilMinor(courses), Object.values(fulfill_courses)))), minor_courses);
+                    const closestMinorNumRemainingCourses = sumMatchingCounts(countKeysUntilMinor(courses), subtractMatchingCounts(fulfill_courses, countMatchingCourses(courses, modifiedCombinedDataString, fulfill_courses)))[closestMinor(calculateCompletionRatio(sumMatchingCounts(countKeysUntilMinor(courses), countMatchingCourses(courses, modifiedCombinedDataString, fulfill_courses)), sumMatchingCounts(countKeysUntilMinor(courses), Object.values(fulfill_courses))))[0]]; // Output: [6, 6, 5, 5]
+
+                    if (closestMinorNumRemainingCourses !== 0) {
+                        // Select the recommended minor container
+                        var recommendedMinorContainer = document.getElementById("recommendedMinor");
+
+                        // Clear previous recommendations
+                        recommendedMinorContainer.innerHTML = "";
+
+                        // Create a new list item to display the closest minor names
+                        var closestMinorItem = document.createElement("li");
+                        closestMinorItem.textContent = "Recommended Minor(s): " + closestMinorNames.join(', ');
+
+                        // Append the new list item to the recommended minor container
+                        recommendedMinorContainer.appendChild(closestMinorItem);
+
+                        // Create a new list item to display the number of remaining courses
+                        var remainingCoursesItem = document.createElement("li");
+                        remainingCoursesItem.textContent = "Remaining Courses To Achieve Minor: " + closestMinorNumRemainingCourses;
+
+                        // Append the new list item to the recommended minor container
+                        recommendedMinorContainer.appendChild(remainingCoursesItem);
+                    }
+
+                    if (closestMinorNumRemainingCourses === 0) {
+                        // Select the recommended minor container
+                        var recommendedMinorContainer = document.getElementById("recommendedMinor");
+
+                        // Clear previous recommendations
+                        recommendedMinorContainer.innerHTML = "";
+
+                        // Create a new list item to display the closest minor names
+                        var achievedMinorItem = document.createElement("li");
+                        achievedMinorItem.textContent = "Minor Achieved: " + closestMinorNames.join(', ');
+
+                        // Append the new list item to the recommended minor container
+                        recommendedMinorContainer.appendChild(achievedMinorItem);
+                    }
+                }
+                
+                
+                // function displayUserRequiredRemainingCourses() {
+                //     const remCourses = remainingCoursesToTake(localStorage.getItem("minor_name"), minor_courses, filteredCourses(modifiedCombinedDataString, courses), countKeysUntilMinor(courses));
+                //     // Array of the remainingCounts but only for the user selected minor from the dropdown list.
+                //     const sel_course_index = selectedCourseIndex(localStorage.getItem("minor_name"), minor_courses, subtractMatchingCounts(fulfill_courses, countMatchingCourses(courses, modifiedCombinedDataString, fulfill_courses)), countKeysUntilMinor(courses));
+                
+                //     const num_minor_subfields = sel_course_index.length;
+                
+                //     var userRemCourseContainer = document.getElementById("requiredMinorCourses");
+                
+                //     // Clear previous recommendations
+                //     userRemCourseContainer.innerHTML = "";
+                
+                //     // Create a new list item to display the closest minor names
+                //     for (let i = 0; i < num_minor_subfields; i++) {
+                //         var userRemCourseItem1 = document.createElement("li");
+                //         var userRemCourseItem2 = document.createElement("li");
+                //         userRemCourseItem1.textContent = "Choose " + sel_course_index[i] + " courses from the following list of courses: ";
+                //         userRemCourseItem2.textContent = remCourses[i];
+                
+                //         // Append the new list item to the recommended minor container
+                //         userRemCourseContainer.appendChild(userRemCourseItem1);
+                //         userRemCourseContainer.appendChild(userRemCourseItem2);
+                //     }
+                // }
+                
+                function displayUserRequiredRemainingCourses() {
+                    const remCourses = remainingCoursesToTake(localStorage.getItem("minor_name"), minor_courses, filteredCourses(modifiedCombinedDataString, courses), countKeysUntilMinor(courses));
+                    // Array of the remainingCounts but only for the user selected minor from the dropdown list.
+                    const sel_course_index = selectedCourseIndex(localStorage.getItem("minor_name"), minor_courses, subtractMatchingCounts(fulfill_courses, countMatchingCourses(courses, modifiedCombinedDataString, fulfill_courses)), countKeysUntilMinor(courses));
+                
+                    const num_minor_subfields = sel_course_index.length;
+                
+                    var userRemCourseContainer = document.getElementById("requiredMinorCourses");
+                
+                    // Clear previous recommendations
+                    userRemCourseContainer.innerHTML = "";
+                
+                    // Create a new list item to display the closest minor names
+                    for (let i = 0; i < num_minor_subfields; i++) {
+                        var userRemCourseItem1 = document.createElement("li");
+                        userRemCourseItem1.textContent = "Choose " + sel_course_index[i] + " courses from the following list of courses: ";
+                
+                        // Create a nested unordered list
+                        var nestedList = document.createElement("ul");
+                
+                        // Create list items for the sub bullet points
+                        for (let j = 0; j < remCourses[i].length; j++) {
+                            var subListItem = document.createElement("li");
+                            subListItem.textContent = remCourses[i][j];
+                            nestedList.appendChild(subListItem);
+                        }
+                
+                        // Append the nested unordered list to the first list item
+                        userRemCourseItem1.appendChild(nestedList);
+                
+                        // Append the first list item to the recommended minor container
+                        userRemCourseContainer.appendChild(userRemCourseItem1);
+                    }
+                }
+                
+                
+                
+                // function displayRemainingMinorCourses() {
+                //     const 
+                //     // Select the recommended minor container
+                //     var recommendedMinorContainer = document.getElementById("requiredMinorCourses");
+                
+                // }
+                
+                
+                
+                
+                
+                
+                
+            </script>
+        </section>
+        </body>
+
+
+
+    </div>
+
+    <script>
+    document.getElementById("ProfileTab").click();
+    function openMainTab(evt, tabName) {
+        var i, tabcontent, tablinks;
+
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+
+        document.getElementById(tabName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+    </script>
+    <script>
+       function saveProfile() {
+            const name = document.querySelector('[placeholder="e.g. \'William Maida | ECE345\'"]').value.trim();
+            const message = document.getElementById('userMessage').value.trim(); // Retrieve the message input
+
+            if (name) {
+                const existingProfiles = JSON.parse(localStorage.getItem('userProfiles')) || [];
+                const newProfile = { name, message }; // Create an object to store both name and message
+
+                // Check if the name already exists
+                const index = existingProfiles.findIndex(profile => profile.name === name);
+
+                if (index === -1) { // Name does not exist, add new profile
+                    existingProfiles.push(newProfile);
+                } else { // Name exists, update the message
+                    existingProfiles[index].message = message;
+                }
+
+                localStorage.setItem('userProfiles', JSON.stringify(existingProfiles));
+                alert('Profile saved!');
+            } else {
+                alert('Please enter a name.');
+            }
+        }
+    </script>
+</body>
+</html>

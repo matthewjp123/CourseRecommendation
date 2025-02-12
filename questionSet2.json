@@ -1,0 +1,128 @@
+[
+    {
+        "question": "Are you looking for a Kernel Course?",
+        "weight": 1,
+        "answers": [
+            { "option": "Yes", "tags": ["Kernel"] },
+            { "option": "Does not matter to me", "tags": ["Does not Matter"] },
+            { "option": "No, I do not want a Kernel course", "tags": ["Not Kernel"] }
+        ]
+    },
+    {
+        "question": "Which study topic interests you the most?",
+        "weight": 3,
+        "answers": [
+            { "option": "Light and its application in technology", "tags": ["Photonics / Semiconductor Physics","Area 1: Photonics & Semiconductor Physics"] },
+            { "option": "How energy is generated and transmission systems", "tags": ["Energy Systems / Electromagnetics","Area 2: Electromagnetics & Energy Systems"] },
+            { "option": "The difference between analog and digtial electronics", "tags": ["Analog and Digital Electronics","Area 3: Analog & Digital Electronics"] },
+            { "option": "The way communication systems function", "tags": ["Control Systems / Communications / Digital Signal Production","Area 4: Control, Communications & Signal Processing"] },
+            { "option": "How the physical components of the computer interact to perform tasks", "tags": ["Computer Hardware / Computer Networks","Area 5: Computer Hardware & Computer Networks"] },
+            { "option": "Creating progams and applications for computers", "tags": ["Software","Area 6: Software"] }
+        ]
+    },
+    {
+        "question": "Which statement do you most agree with based on your previous studies?",
+        "weight": 2,
+        "answers": [
+            { "option": "I find courses on semiconductor physics more intuitive", "tags": ["Photonics / Semiconductor Physics","Area 1: Photonics & Semiconductor Physics"] },
+            { "option": "I find I grasp topics regarding electromagnetic fields and energy systems easily", "tags": ["Energy Systems / Electromagnetics","Area 2: Electromagnetics & Energy Systems"] },
+            { "option": "I enjoy and am good at analyzing circuits", "tags": ["Analog and Digital Electronics","Area 3: Analog & Digital Electronics"] },
+            { "option": "I am comfortable with concepts regarding processing of signals", "tags": ["Control Systems / Communications / Digital Signal Production","Area 4: Control, Communications & Signal Processing"] },
+            { "option": "I find working with hardware components of computers more straightforward", "tags": ["Computer Hardware / Computer Networks","Area 5: Computer Hardware & Computer Networks"] },
+            { "option": "I am good at problem solving, particularly when working on software", "tags": ["Software","Area 6: Software"] }
+        ]
+    },
+    {
+        "question": "Do you want courses with Labs?",
+        "weight": 2,
+        "answers": [
+            { "option": "Yay! Labs!", "tags": ["Labs"] },
+            { "option": "Perhaps not...", "tags": ["No Labs"] }
+    ]
+    },
+    {
+        "question": "Do the following options feature your dream job?",
+        "weight": 10,
+        "answers": [
+            { "option": "5G/6G Tech Reasearcher", "tags": ["Wireless / Optical / Future Communications (5G/6G)"] },
+            { "option": "Power Electronics Designer", "tags": ["Smart-Grid / Power Electronics"] },
+            { "option": "IoT Security Analyst", "tags": ["Internet of Things"] },
+            { "option": "Analog Circuit Designer", "tags": ["Digital / Analog and Integrated Circuit Design"]},
+            { "option": "Mechatronics Engineer", "tags": ["Robotics and Control System"] },
+            { "option": "Medical Device Engineer", "tags": ["Digital Health"] },
+            { "option": "Electric Vehicle Systems Engineer", "tags": ["Electric / Autonomous / Connected Vehicles"] },
+            { "option": "Quantum Algorithm Developer", "tags": ["Quantum Computing"]},
+            { "option": "Cybersecurity Analyst", "tags": ["Cybersecurity"] },
+            { "option": "Biomedical Engineer", "tags": ["Biomedical / Photonics / Displays"] },
+            { "option": "Data Scientist", "tags": ["Machine Learning and Artificial Intelligence"] },
+            { "option": "Data Engineer", "tags": ["Big Data"] },
+            { "option": "None of the jobs interest me"}
+        ]
+    },
+
+    {
+        "question": "Do you have any Minor you wish to pursue?",
+        "weight": 5,
+        "answers": [
+            { "option": "Adavanced Manufacturing", "tags": ["Adavanced Manufacturing"] },
+            { "option": "Artificial Intelligence Engineering", "tags": ["Artificial Intelligence Engineering"] },
+            { "option": "Bioengineering", "tags": ["Bioengineering"] },
+            { "option": "Biomedical Engineering", "tags": ["Biomedical Engineering"]},
+            { "option": "Engineering Business", "tags": ["Engineering Business"] },
+            { "option": "Environmental Engineering", "tags": ["Environmental Engineering"] },
+            { "option": "Global Leadership", "tags": ["Global Leadership"] },
+            { "option": "Music Performance", "tags": ["Music Performance"]},
+            { "option": "Nanoengineering", "tags": ["Nanoengineering"] },
+            { "option": "Robotics & Mechatronics", "tags": ["Robotics & Mechatronics"] },
+            { "option": "Sustainable Energy", "tags": ["Sustainable Energy"] },
+            { "option": "No", "tags": ["No Minor"] }
+        ]
+    },
+    {
+        "question": "Which study topic interests you the most?",
+        "weight": 5,
+        "answers": [
+            { "option": "The intersection of physics and technology, specfically regarding semiconductors", "tags": ["Photonics / Semiconductor Physics","Area 1: Photonics & Semiconductor Physics"] },
+            { "option": "The principles of electromagnetics", "tags": ["Energy Systems / Electromagnetics","Area 2: Electromagnetics & Energy Systems"] },
+            { "option": "Understanding how signals are processed in electrical circuits", "tags": ["Analog and Digital Electronics","Area 3: Analog & Digital Electronics"] },
+            { "option": "The manipulation of information in digital systems", "tags": ["Control Systems / Communications / Digital Signal Production","Area 4: Control, Communications & Signal Processing"] },
+            { "option": "Design and functionality of computer networks", "tags": ["Computer Hardware / Computer Networks","Area 5: Computer Hardware & Computer Networks"] },
+            { "option": "The problem solving aspect in regard to coding", "tags": ["Software","Area 6: Software"] }
+        ]
+    },
+    {
+        "question": "Any idea on the area you want to specilize in?",
+        "weight": 10,
+        "answers": [
+            { "option": "Photonics / Semiconductor Physics", "tags": ["Photonics / Semiconductor Physics","Area 1: Photonics & Semiconductor Physics"] },
+            { "option": "Energy Systems / Electromagnetics", "tags": ["Energy Systems / Electromagnetics","Area 2: Electromagnetics & Energy Systems"] },
+            { "option": "Analog and Digital Electronics", "tags": ["Analog and Digital Electronics","Area 3: Analog & Digital Electronics"] },
+            { "option": "Control Systems / Communications / Digital Signal Production", "tags": ["Control Systems / Communications / Digital Signal Production","Area 4: Control, Communications & Signal Processing"] },
+            { "option": "Computer Hardware / Computer Networks", "tags": ["Computer Hardware / Computer Networks","Area 5: Computer Hardware & Computer Networks"] },
+            { "option": "Software", "tags": ["Software","Area 6: Software"] },
+            { "option": "I Do Not Know" }
+        ]
+    },
+    {
+        "question": "Did any of these previous courses interested you most?",
+        "weight": 4,
+        "answers": [
+            { "option": "ECE221H1", "tags": ["Photonics / Semiconductor Physics","Area 1: Photonics & Semiconductor Physics"] },
+            { "option": "ECE231H1", "tags": ["Energy Systems / Electromagnetics","Area 2: Electromagnetics & Energy Systems"] },
+            { "option": "ECE216H1", "tags": ["Analog and Digital Electronics","Area 3: Analog & Digital Electronics"] },
+            { "option": "MAT291H1", "tags": ["Control Systems / Communications / Digital Signal Production","Area 4: Control, Communications & Signal Processing"] },
+            { "option": "ECE243H1", "tags": ["Computer Hardware / Computer Networks","Area 5: Computer Hardware & Computer Networks"] },
+            { "option": "ECE244H1", "tags": ["Software","Area 6: Software"] },
+            { "option": "I Do Not Know" }
+        ]
+    },
+    {
+        "question": "Are you interested in courses that will contribute to minors",
+        "weight": 3,
+        "answers": [
+            { "option": "Yes I would like to pursue a minor", "tags": ["minor"] },
+            { "option": "No that does not interest me", "tags": [] }
+            
+        ]
+    }
+]
